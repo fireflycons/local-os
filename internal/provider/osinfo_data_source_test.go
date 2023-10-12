@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccExampleDataSource(t *testing.T) {
+func TestAccOsInfoDataSource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -18,7 +18,7 @@ func TestAccExampleDataSource(t *testing.T) {
 			{
 				Config: testAccExampleDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.scaffolding_example.test", "id", "example-id"),
+					resource.TestCheckResourceAttr("data.localos_info.test", "id", "example-id"),
 				),
 			},
 		},
@@ -26,7 +26,7 @@ func TestAccExampleDataSource(t *testing.T) {
 }
 
 const testAccExampleDataSourceConfig = `
-data "scaffolding_example" "test" {
+data "localos_info" "test" {
   configurable_attribute = "example"
 }
 `

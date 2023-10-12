@@ -14,7 +14,7 @@ Example data source
 
 ```terraform
 data "scaffolding_example" "example" {
-  configurable_attribute = "some-value"
+  name = "some-value"
 }
 ```
 
@@ -23,7 +23,7 @@ data "scaffolding_example" "example" {
 
 ### Optional
 
-- `configurable_attribute` (String) Example configurable attribute
+- `name` (String) Example configurable attribute
 
 ### Read-Only
 

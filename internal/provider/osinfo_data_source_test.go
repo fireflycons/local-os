@@ -4,29 +4,34 @@
 package provider
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccOsInfoDataSource(t *testing.T) {
+	expectedName := runtime.GOOS
+	expectedArch := runtime.GOARCH
+	expectedId := expectedName + "/" + expectedArch
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccExampleDataSourceConfig,
+				Config: testAccOsInfoDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.localos_info.test", "id", "example-id"),
+					resource.TestCheckResourceAttr("data.localos_info.test", "id", expectedId),
+					resource.TestCheckResourceAttr("data.localos_info.test", "name", expectedName),
+					resource.TestCheckResourceAttr("data.localos_info.test", "arch", expectedArch),
 				),
 			},
 		},
 	})
 }
 
-const testAccExampleDataSourceConfig = `
+const testAccOsInfoDataSourceConfig = `
 data "localos_info" "test" {
-  configurable_attribute = "example"
 }
 `

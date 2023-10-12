@@ -70,7 +70,8 @@ func (p *LocalOsProvider) Resources(ctx context.Context) []func() resource.Resou
 
 func (p *LocalOsProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewOsInfoDataSource,
+		NewFoldersDataSource,
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"runtime"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -17,7 +18,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &OsInfoDataSource{}
 
-func NewExampleDataSource() datasource.DataSource {
+func NewOsInfoDataSource() datasource.DataSource {
 	return &OsInfoDataSource{}
 }
 
@@ -28,8 +29,9 @@ type OsInfoDataSource struct {
 
 // OsInfoDataSourceModel describes the data source data model.
 type OsInfoDataSourceModel struct {
-	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
-	Id                    types.String `tfsdk:"id"`
+	Id   types.String `tfsdk:"id"`
+	Name types.String `tfsdk:"name"`
+	Arch types.String `tfsdk:"arch"`
 }
 
 func (d *OsInfoDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,15 +41,19 @@ func (d *OsInfoDataSource) Metadata(ctx context.Context, req datasource.Metadata
 func (d *OsInfoDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Example data source",
+		MarkdownDescription: "`osinfo` data source gets information about the operating system of the machine that is running terraform.",
 
 		Attributes: map[string]schema.Attribute{
-			"configurable_attribute": schema.StringAttribute{
-				MarkdownDescription: "Example configurable attribute",
-				Optional:            true,
-			},
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Example identifier",
+				Computed:            true,
+			},
+			"name": schema.StringAttribute{
+				MarkdownDescription: "OS Name, e.g \"linux\"",
+				Computed:            true,
+			},
+			"arch": schema.StringAttribute{
+				MarkdownDescription: "OS Architecture, e.g. \"amd64\"",
 				Computed:            true,
 			},
 		},
@@ -84,21 +90,15 @@ func (d *OsInfoDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// httpResp, err := d.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read example, got error: %s", err))
-	//     return
-	// }
-
-	// For the purposes of this example code, hardcoding a response value to
-	// save into the Terraform state.
-	data.Id = types.StringValue("example-id")
+	os := runtime.GOOS
+	arch := runtime.GOARCH
+	data.Id = types.StringValue(os + "/" + arch)
+	data.Name = types.StringValue(os)
+	data.Arch = types.StringValue(arch)
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log
-	tflog.Trace(ctx, "read a data source")
+	tflog.Trace(ctx, "Read osinfo data source")
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

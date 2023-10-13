@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure localosProvider satisfies various provider interfaces.
@@ -27,7 +26,6 @@ type LocalOsProvider struct {
 
 // LocalOsProviderModel describes the provider data model.
 type LocalOsProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
 }
 
 func (p *LocalOsProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -37,12 +35,12 @@ func (p *LocalOsProvider) Metadata(ctx context.Context, req provider.MetadataReq
 
 func (p *LocalOsProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
-				Optional:            true,
-			},
-		},
+		MarkdownDescription: `
+The local-os provider provides information in the form of data sourcesabout the operating system on which you are running terraform.
+
+In certian situations it can be useful to know if your configuration is running on Windows or not, especically for storing
+locally created artifacts such as key pairs in the appropriate directories..
+		`,
 	}
 }
 

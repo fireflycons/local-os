@@ -3,7 +3,7 @@ package specialfolder
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/fireflycons/local-os/internal/provider/hasher"
 )
@@ -18,7 +18,7 @@ func newWindowsSpecialFolder() *windowsSpecialFolder {
 	s := &windowsSpecialFolder{
 		specialFolder: specialFolder{
 			home: home,
-			ssh:  path.Join(home, ".ssh"),
+			ssh:  filepath.Join(home, ".ssh"),
 		},
 	}
 

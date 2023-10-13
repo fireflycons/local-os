@@ -5,8 +5,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
 	"github.com/fireflycons/local-os/internal/provider/specialfolder"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -24,7 +22,6 @@ func NewFoldersDataSource() datasource.DataSource {
 
 // FoldersDataSource defines the data source implementation.
 type FoldersDataSource struct {
-	client *http.Client
 }
 
 // FoldersDataSourceModel describes the data source data model.
@@ -41,7 +38,7 @@ func (d *FoldersDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (d *FoldersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "`folders` data source gets information about special folders on the machine that is running terraform.",
+		MarkdownDescription: "The `folders` data source gets information about special folders on the machine that is running terraform.",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -53,7 +50,7 @@ func (d *FoldersDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				Computed:            true,
 			},
 			"ssh": schema.StringAttribute{
-				MarkdownDescription: "Abosolute path to user's SSH keys directory",
+				MarkdownDescription: "Absolute path to user's SSH keys directory",
 				Computed:            true,
 			},
 		},
@@ -61,23 +58,7 @@ func (d *FoldersDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 }
 
 func (d *FoldersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Prevent panic if the provider has not been configured.
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*http.Client)
-
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *http.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-
-		return
-	}
-
-	d.client = client
+	// Nothing to configure
 }
 
 func (d *FoldersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

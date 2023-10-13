@@ -5,15 +5,22 @@ package provider
 
 import (
 	"os"
-	"path"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccFoldersDataSource(t *testing.T) {
-	expectedHome := os.Getenv("HOME")
-	expectedSSH := path.Join(expectedHome, ".ssh")
+	var expectedHome, expectedSSH string
+
+	if runtime.GOOS == "windows" {
+		expectedHome = os.Getenv("USERPROFILE")
+	} else {
+		expectedHome = os.Getenv("HOME")
+	}
+	expectedSSH = filepath.Join(expectedHome, ".ssh")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,

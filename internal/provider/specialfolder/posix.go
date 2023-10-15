@@ -9,20 +9,22 @@ import (
 	"github.com/fireflycons/local-os/internal/provider/hasher"
 )
 
-type windowsSpecialFolder struct {
+// It is assumed that everything that is not windows follows the posix paradigm
+
+type posixSpecialFolder struct {
 	specialFolder
 }
 
-func newWindowsSpecialFolder() *windowsSpecialFolder {
+func newPosixSpecialFolder() *posixSpecialFolder {
 	var home string
 	u, err := user.Current()
 	if err == nil {
 		home = u.HomeDir
 	} else {
-		home = os.Getenv(("USERPROFILE"))
+		home = os.Getenv(("HOME"))
 	}
 
-	s := &windowsSpecialFolder{
+	s := &posixSpecialFolder{
 		specialFolder: specialFolder{
 			home: home,
 			ssh:  filepath.Join(home, ".ssh"),
@@ -32,16 +34,16 @@ func newWindowsSpecialFolder() *windowsSpecialFolder {
 	return s
 }
 
-func (f *windowsSpecialFolder) Home() string {
+func (f *posixSpecialFolder) Home() string {
 	return f.home
 }
 
-func (f *windowsSpecialFolder) SSH() string {
+func (f *posixSpecialFolder) SSH() string {
 	return f.ssh
 }
 
-func (f *windowsSpecialFolder) ID() string {
+func (f *posixSpecialFolder) ID() string {
 	h := hasher.NewMarvin32(0x1fffffffffffffff)
-	h.Sum([]byte(os.Getenv("COMPUTERNAME")))
+	h.Sum([]byte(os.Getenv("HOSTNAME")))
 	return fmt.Sprintf("%08x", h.Sum32())
 }

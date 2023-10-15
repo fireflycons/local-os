@@ -3,17 +3,21 @@
 page_title: "local-os Provider"
 subcategory: ""
 description: |-
-  The local-os provider provides information in the form of data sourcesabout the operating system on which you are running terraform.
-  In certian situations it can be useful to know if your configuration is running on Windows or not, especically for storing
-  locally created artifacts such as key pairs in the appropriate directories..
+  The local-os provider provides information in the form of data sources about
+  the operating system and enviromnent of the machine
+  on which you are running terraform.
+  In certain situations it can be useful to know if your configuration is running on Windows or not,
+  especically for storing locally created artifacts such as key pairs in the appropriate directories.
 ---
 
 # local-os Provider
 
-The local-os provider provides information in the form of data sourcesabout the operating system on which you are running terraform.
+The local-os provider provides information in the form of data sources about
+the operating system and enviromnent of the machine
+on which you are running terraform.
 
-In certian situations it can be useful to know if your configuration is running on Windows or not, especically for storing
-locally created artifacts such as key pairs in the appropriate directories..
+In certain situations it can be useful to know if your configuration is running on Windows or not,
+especically for storing locally created artifacts such as key pairs in the appropriate directories.
 
 ## Example Usage
 

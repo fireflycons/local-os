@@ -20,3 +20,5 @@ The `folders` data source gets information about special folders on the machine 
 - `home` (String) Absolute path to user's home directory
 - `id` (String) Resource identifier
 - `ssh` (String) Absolute path to user's SSH keys directory
+	* On Windows, this is the value of `%USERPROFILE%\.ssh`
+	* On other systems, this is normally `$HOME/.ssh`

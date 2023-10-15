@@ -36,11 +36,13 @@ func (p *LocalOsProvider) Metadata(ctx context.Context, req provider.MetadataReq
 func (p *LocalOsProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: `
-The local-os provider provides information in the form of data sourcesabout the operating system on which you are running terraform.
+The local-os provider provides information in the form of data sources about
+the operating system and enviromnent of the machine
+on which you are running terraform.
 
-In certian situations it can be useful to know if your configuration is running on Windows or not, especically for storing
-locally created artifacts such as key pairs in the appropriate directories..
-		`,
+In certain situations it can be useful to know if your configuration is running on Windows or not,
+especically for storing locally created artifacts such as key pairs in the appropriate directories.
+`,
 	}
 }
 
@@ -53,10 +55,6 @@ func (p *LocalOsProvider) Configure(ctx context.Context, req provider.ConfigureR
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
 	client := http.DefaultClient
 	resp.DataSourceData = client
 	resp.ResourceData = client
@@ -70,6 +68,7 @@ func (p *LocalOsProvider) DataSources(ctx context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewOsInfoDataSource,
 		NewFoldersDataSource,
+		NewPublicIPDataSource,
 	}
 }
 

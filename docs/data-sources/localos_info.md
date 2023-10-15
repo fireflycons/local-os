@@ -3,12 +3,12 @@
 page_title: "localos_info Data Source - local-os"
 subcategory: ""
 description: |-
-  The info data source gets information about the operating system of the machine that is running terraform.
+  The info data source gets information about the operating system and environment of the machine that is running terraform.
 ---
 
 # localos_info (Data Source)
 
-The `info` data source gets information about the operating system of the machine that is running terraform.
+The `info` data source gets information about the operating system and environment of the machine that is running terraform.
 
 
 
@@ -18,6 +18,7 @@ The `info` data source gets information about the operating system of the machin
 ### Read-Only
 
 - `arch` (String) OS Architecture, e.g. "amd64"
+- `environment` (Map of String, Sensitive) Map of all environment variables
 - `id` (String) Resource identifier
 - `is_windows` (Boolean) Utility attribute to quickly determine windows/not windows. Other supported OS are assumed to follow POSIX semantics.
 - `name` (String) OS Name, e.g. "linux"

@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fireflycons/local-os/internal/provider/specialfolder"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -50,8 +51,11 @@ func (d *FoldersDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				Computed:            true,
 			},
 			"ssh": schema.StringAttribute{
-				MarkdownDescription: "Absolute path to user's SSH keys directory",
-				Computed:            true,
+				MarkdownDescription: fmt.Sprintf(`Absolute path to user's SSH keys directory
+	* On Windows, this is the value of %c%cUSERPROFILE%c\.ssh%c
+	* On other systems, this is normally %c$HOME/.ssh%c
+				`, '`', '%', '%', '`', '`', '`'),
+				Computed: true,
 			},
 		},
 	}

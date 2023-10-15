@@ -18,5 +18,5 @@ func NewSpecialFolder() SpecialFolder {
 		return newWindowsSpecialFolder()
 	}
 
-	return newLinuxSpecialFolder()
+	return newPosixSpecialFolder()
 }

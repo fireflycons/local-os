@@ -4,8 +4,11 @@
 package provider
 
 import (
+	"fmt"
+	"os"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -16,6 +19,18 @@ func TestAccOsInfoDataSource(t *testing.T) {
 	expectedArch := runtime.GOARCH
 	expectedId := expectedName + "/" + expectedArch
 	is_windows := expectedName == "windows"
+	checks := []resource.TestCheckFunc{
+		resource.TestCheckResourceAttr("data.localos_info.test", "id", expectedId),
+		resource.TestCheckResourceAttr("data.localos_info.test", "name", expectedName),
+		resource.TestCheckResourceAttr("data.localos_info.test", "arch", expectedArch),
+		resource.TestCheckResourceAttr("data.localos_info.test", "is_windows", strconv.FormatBool(is_windows)),
+	}
+
+	for _, e := range os.Environ() {
+		kv := strings.Split(e, "=")
+		checks = append(checks, resource.TestCheckResourceAttr("data.localos_info.test", fmt.Sprintf("environment.%s", kv[0]), kv[1]))
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -23,18 +38,17 @@ func TestAccOsInfoDataSource(t *testing.T) {
 			// Read testing
 			{
 				Config: testAccOsInfoDataSourceConfig,
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.localos_info.test", "id", expectedId),
-					resource.TestCheckResourceAttr("data.localos_info.test", "name", expectedName),
-					resource.TestCheckResourceAttr("data.localos_info.test", "arch", expectedArch),
-					resource.TestCheckResourceAttr("data.localos_info.test", "is_windows", strconv.FormatBool(is_windows)),
-				),
+				Check:  resource.ComposeAggregateTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccOsInfoDataSourceConfig = `
-data "localos_info" "test" {
-}
-`
+const testAccOsInfoDataSourceConfig = `data "localos_info" "test" {}`
+
+// resource.TestCheckResourceAttr("data.localos_info.test", "id", expectedId),
+// resource.TestCheckResourceAttr("data.localos_info.test", "name", expectedName),
+// resource.TestCheckResourceAttr("data.localos_info.test", "arch", expectedArch),
+// resource.TestCheckResourceAttr("data.localos_info.test", "is_windows", strconv.FormatBool(is_windows)),
+// resource.TestCheckResourceAttr("data.localos_info.test", "environment.USER", "abm"),
+// resource.TestCheckResourceAttr("data.localos_info.test", "environment.TF_ACC", "1"),

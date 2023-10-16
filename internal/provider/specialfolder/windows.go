@@ -2,11 +2,10 @@ package specialfolder
 
 import (
 	"fmt"
+	"hash/fnv"
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/fireflycons/local-os/internal/provider/hasher"
 )
 
 type windowsSpecialFolder struct {
@@ -41,7 +40,7 @@ func (f *windowsSpecialFolder) SSH() string {
 }
 
 func (f *windowsSpecialFolder) ID() string {
-	h := hasher.NewMarvin32(0x1fffffffffffffff)
+	h := fnv.New32a()
 	h.Sum([]byte(os.Getenv("COMPUTERNAME")))
 	return fmt.Sprintf("%08x", h.Sum32())
 }

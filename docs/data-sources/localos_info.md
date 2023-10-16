@@ -18,7 +18,7 @@ The `info` data source gets information about the operating system and environme
 ### Read-Only
 
 - `arch` (String) OS Architecture, e.g. "amd64"
-- `environment` (Map of String, Sensitive) Map of all environment variables
+- `environment` (Map of String, Sensitive) Map of all environment variables, with key=variable name (case sensitive), value=variable value.
 - `id` (String) Resource identifier
 - `is_windows` (Boolean) Utility attribute to quickly determine windows/not windows. Other supported OS are assumed to follow POSIX semantics.
 - `name` (String) OS Name, e.g. "linux"

@@ -25,3 +25,4 @@ description: |-
 
     Will be empty string if the internet is not accessible from the caller.
 - `id` (String) Resource identifier
+- `ip` (String, Sensitive) Public IP of machine running terraform.

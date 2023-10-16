@@ -111,7 +111,7 @@ func (m *marvin) Sum(b []byte) []byte {
 	return append(b, p...)
 }
 
-// marvin finalize step
+// marvin finalize step.
 func (m *marvin) Sum32() uint32 {
 
 	/* pad the final 0-3 bytes with 0x80 */

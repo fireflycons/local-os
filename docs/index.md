@@ -6,7 +6,7 @@ description: "The localos provider gets information about the machine running te
 
 # localos Provider
 
-The local-os provider provides information in the form of data sources about
+The localos provider provides information in the form of data sources about
 the operating system and environment of the machine
 on which you are running terraform.
 
@@ -20,7 +20,7 @@ especically for storing locally created artifacts such as key pairs in the appro
 terraform {
   required_providers {
     environment = {
-      source = "registry.terraform.io/fireflycons/local-os"
+      source = "registry.terraform.io/fireflycons/localos"
     }
   }
 }

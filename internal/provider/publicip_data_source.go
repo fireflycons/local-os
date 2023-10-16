@@ -39,6 +39,7 @@ type PublicIPDataSource struct {
 type PublicIPDataSourceModel struct {
 	Id   types.String `tfsdk:"id"`
 	Cidr types.String `tfsdk:"cidr"`
+	IP   types.String `tfsdk:"ip"`
 }
 
 func (d *PublicIPDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -65,6 +66,11 @@ func (d *PublicIPDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 `,
 				Computed:  true,
 				Sensitive: true,
+			},
+			"ip": schema.StringAttribute{
+				MarkdownDescription: `Public IP of machine running terraform.`,
+				Computed:            true,
+				Sensitive:           true,
 			},
 		},
 	}
@@ -121,8 +127,10 @@ func (d *PublicIPDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
+	ip := strings.TrimSpace(buf.String())
 	data.Id = types.StringValue(amazonCheckIp)
-	data.Cidr = types.StringValue(strings.TrimSpace(buf.String()) + "/32")
+	data.Cidr = types.StringValue(ip + "/32")
+	data.IP = types.StringValue(ip)
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log

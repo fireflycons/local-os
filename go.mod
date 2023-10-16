@@ -1,4 +1,4 @@
-module github.com/fireflycons/local-os
+module github.com/fireflycons/terraform-provider-localos
 
 go 1.19
 

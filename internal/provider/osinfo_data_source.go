@@ -63,7 +63,7 @@ func (d *OsInfoDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Computed:            true,
 			},
 			"environment": schema.MapAttribute{
-				MarkdownDescription: "Map of all environment variables",
+				MarkdownDescription: "Map of all environment variables, with key=variable name (case sensitive), value=variable value.",
 				ElementType:         types.StringType,
 				Computed:            true,
 				Sensitive:           true,

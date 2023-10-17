@@ -8,7 +8,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/fireflycons/local-os/internal/provider"
+	"github.com/fireflycons/terraform-provider-localos/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -39,7 +39,7 @@ func main() {
 
 	opts := providerserver.ServeOpts{
 		// TODO: Update this string with the published name of your provider.
-		Address: "github.com/fireflycons/local-os",
+		Address: "github.com/fireflycons/terraform-provider-localos",
 		Debug:   debug,
 	}
 

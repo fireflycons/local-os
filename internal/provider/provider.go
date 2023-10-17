@@ -36,8 +36,8 @@ func (p *LocalOsProvider) Metadata(ctx context.Context, req provider.MetadataReq
 func (p *LocalOsProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: `
-The local-os provider provides information in the form of data sources about
-the operating system and enviromnent of the machine
+The localos provider provides information in the form of data sources about
+the operating system and environment of the machine
 on which you are running terraform.
 
 In certain situations it can be useful to know if your configuration is running on Windows or not,

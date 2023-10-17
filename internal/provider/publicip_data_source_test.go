@@ -13,7 +13,8 @@ import (
 
 func TestAccPublicIpDataSource(t *testing.T) {
 
-	cidr_regex := regexp.MustCompile(`\d+\.\d+.\d+.\d+/32`)
+	ip_regex := regexp.MustCompile(`^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`)
+	cidr_regex := regexp.MustCompile(`^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|/32$)){4})`)
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -26,6 +27,12 @@ func TestAccPublicIpDataSource(t *testing.T) {
 					resource.TestCheckResourceAttrWith("data.localos_public_ip.test", "cidr", func(value string) error {
 						if !cidr_regex.MatchString(value) {
 							return fmt.Errorf("Value %s does not match a /32 cidr", value)
+						}
+						return nil
+					}),
+					resource.TestCheckResourceAttrWith("data.localos_public_ip.test", "ip", func(value string) error {
+						if !ip_regex.MatchString(value) {
+							return fmt.Errorf("Value %s does not match an IP address", value)
 						}
 						return nil
 					}),

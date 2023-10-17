@@ -37,7 +37,4 @@ func TestAccFoldersDataSource(t *testing.T) {
 	})
 }
 
-const testAccFoldersDataSourceConfig = `
-data "localos_folders" "test" {
-}
-`
+const testAccFoldersDataSourceConfig = `data "localos_folders" "test" {}`

@@ -2,11 +2,10 @@ package specialfolder
 
 import (
 	"fmt"
+	"hash/fnv"
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/fireflycons/local-os/internal/provider/hasher"
 )
 
 // It is assumed that everything that is not windows follows the posix paradigm
@@ -43,7 +42,7 @@ func (f *posixSpecialFolder) SSH() string {
 }
 
 func (f *posixSpecialFolder) ID() string {
-	h := hasher.NewMarvin32(0x1fffffffffffffff)
+	h := fnv.New32a()
 	h.Sum([]byte(os.Getenv("HOSTNAME")))
 	return fmt.Sprintf("%08x", h.Sum32())
 }

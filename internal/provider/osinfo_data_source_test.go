@@ -45,10 +45,3 @@ func TestAccOsInfoDataSource(t *testing.T) {
 }
 
 const testAccOsInfoDataSourceConfig = `data "localos_info" "test" {}`
-
-// resource.TestCheckResourceAttr("data.localos_info.test", "id", expectedId),
-// resource.TestCheckResourceAttr("data.localos_info.test", "name", expectedName),
-// resource.TestCheckResourceAttr("data.localos_info.test", "arch", expectedArch),
-// resource.TestCheckResourceAttr("data.localos_info.test", "is_windows", strconv.FormatBool(is_windows)),
-// resource.TestCheckResourceAttr("data.localos_info.test", "environment.USER", "abm"),
-// resource.TestCheckResourceAttr("data.localos_info.test", "environment.TF_ACC", "1"),

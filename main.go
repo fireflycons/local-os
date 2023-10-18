@@ -39,7 +39,7 @@ func main() {
 
 	opts := providerserver.ServeOpts{
 		// TODO: Update this string with the published name of your provider.
-		Address: "github.com/fireflycons/terraform-provider-localos",
+		Address: "registry.terraform.io/fireflycons/terraform-provider-localos",
 		Debug:   debug,
 	}
 

@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    environment = {
+    localos = {
       source = "registry.terraform.io/fireflycons/localos"
     }
   }

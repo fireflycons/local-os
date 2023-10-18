@@ -19,7 +19,7 @@ especically for storing locally created artifacts such as key pairs in the appro
 ```terraform
 terraform {
   required_providers {
-    environment = {
+    localos = {
       source = "registry.terraform.io/fireflycons/localos"
     }
   }

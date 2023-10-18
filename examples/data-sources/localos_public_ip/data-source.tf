@@ -1,0 +1,9 @@
+data "localos_public_ip" "my_ip" {}
+
+output "cidr" {
+  value = nonsensitive(data.localos_public_ip.cidr)
+}
+
+output "cidr" {
+  value = nonsensitive(data.localos_public_ip.ip)
+}

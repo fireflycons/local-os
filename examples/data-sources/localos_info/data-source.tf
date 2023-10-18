@@ -13,7 +13,6 @@ output "os_is_windows" {
 }
 
 output "os_path_var" {
-  value     = data.localos_info.os_info.environment.PATH
-  sensitive = true
+  value = nonsensitive(data.localos_info.os_info.environment.PATH)
 }
 

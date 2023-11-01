@@ -22,12 +22,11 @@ func TestAccFoldersDataSource(t *testing.T) {
 	}
 	expectedSSH = filepath.Join(expectedHome, ".ssh")
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccFoldersDataSourceConfig,
+				Config: `data "localos_folders" "test" {}`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.localos_folders.test", "home", expectedHome),
 					resource.TestCheckResourceAttr("data.localos_folders.test", "ssh", expectedSSH),
@@ -36,5 +35,3 @@ func TestAccFoldersDataSource(t *testing.T) {
 		},
 	})
 }
-
-const testAccFoldersDataSourceConfig = `data "localos_folders" "test" {}`

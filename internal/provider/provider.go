@@ -69,6 +69,7 @@ func (p *LocalOsProvider) DataSources(ctx context.Context) []func() datasource.D
 		NewOsInfoDataSource,
 		NewFoldersDataSource,
 		NewPublicIPDataSource,
+		NewPrivateIPDataSource,
 	}
 }
 

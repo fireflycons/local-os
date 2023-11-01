@@ -32,16 +32,13 @@ func TestAccOsInfoDataSource(t *testing.T) {
 	}
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccOsInfoDataSourceConfig,
+				Config: `data "localos_info" "test" {}`,
 				Check:  resource.ComposeAggregateTestCheckFunc(checks...),
 			},
 		},
 	})
 }
-
-const testAccOsInfoDataSourceConfig = `data "localos_info" "test" {}`

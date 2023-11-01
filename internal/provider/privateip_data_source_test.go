@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-var nics = privateip.GetLocalIP4Interfaces(true)
+var nics = privateip.MustGetLocalIP4Interfaces(true)
 var primary = privateip.GetPrimary(nics)
 var countSecondaries = func() int {
 	cnt := 0

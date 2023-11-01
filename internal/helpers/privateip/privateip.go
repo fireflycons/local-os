@@ -2,6 +2,7 @@ package privateip
 
 import (
 	"encoding/binary"
+	"errors"
 	"net"
 
 	"github.com/jackpal/gateway"
@@ -24,9 +25,17 @@ func GetPrimary(nics []*NIC) *NIC {
 	return nil
 }
 
-// Get all non-loopback interfaces for this host
-// Primary is defined as the interface that routes to default gateway
-func GetLocalIP4Interfaces(includeLinkLocal bool) []*NIC {
+func MustGetLocalIP4Interfaces(includeLinkLocal bool) []*NIC {
+	n, e := GetLocalIP4Interfaces(includeLinkLocal)
+	if e != nil {
+		panic(e)
+	}
+	return n
+}
+
+// Get all non-loopback interfaces for this host.
+// Primary is defined as the interface that routes to default gateway.
+func GetLocalIP4Interfaces(includeLinkLocal bool) ([]*NIC, error) {
 	var (
 		nic      net.Interface
 		nics     []net.Interface
@@ -36,12 +45,12 @@ func GetLocalIP4Interfaces(includeLinkLocal bool) []*NIC {
 	)
 
 	results := make([]*NIC, 0, 4)
-	// Will be nil if no interface has a default gateway
-	// Terraform wouldn't be possible without it
+	// Will be nil if no interface has a default gateway.
+	// Terraform wouldn't be possible without it.
 	primaryIP, _ := gateway.DiscoverInterface()
 
 	if nics, err = net.Interfaces(); err != nil {
-		return nil
+		return nil, err
 	}
 
 	for _, nic = range nics {
@@ -51,7 +60,10 @@ func GetLocalIP4Interfaces(includeLinkLocal bool) []*NIC {
 		}
 
 		for _, addr := range addrs { // get ipv4 address
-			n := addr.(*net.IPNet)
+			n, ok := addr.(*net.IPNet)
+			if !ok {
+				return nil, errors.New("unable to cast 'net.Addr' to '*net.IPNet'")
+			}
 			if ipv4Addr = n.IP.To4(); ipv4Addr != nil {
 				if n.IP.IsLoopback() {
 					// always ignore
@@ -77,10 +89,10 @@ func GetLocalIP4Interfaces(includeLinkLocal bool) []*NIC {
 		}
 	}
 
-	return results
+	return results, nil
 }
 
-// Get subnet CIDR for given host
+// Get subnet CIDR for given host.
 func getNetworkForHost(host *net.IPNet) (network *net.IPNet) {
 
 	network = &net.IPNet{
@@ -88,7 +100,7 @@ func getNetworkForHost(host *net.IPNet) (network *net.IPNet) {
 		Mask: host.Mask,
 	}
 
-	// Subnet address is IP of host BITWISE-AND netmask
+	// Subnet address is IP of host BITWISE-AND netmask.
 	binary.BigEndian.PutUint32(
 		network.IP,
 		binary.BigEndian.Uint32(host.IP.To4())&binary.BigEndian.Uint32(host.Mask),

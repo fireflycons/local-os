@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var nics = GetLocalIP4Interfaces(true)
+var nics = MustGetLocalIP4Interfaces(true)
 
 func TestPrimaryInteface(t *testing.T) {
 

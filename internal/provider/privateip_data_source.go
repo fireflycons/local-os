@@ -116,10 +116,14 @@ func (d *PrivateIPDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	secondaries := make([]NICModel, 0, 4)
-
 	data.Primary = basetypes.NewObjectNull(nicAttributeTypes())
+	nics, err := privateip.GetLocalIP4Interfaces(true)
 
-	for _, nic := range privateip.GetLocalIP4Interfaces(true) {
+	if err != nil {
+		resp.Diagnostics.AddError(err.Error(), "This is an error with the provider.")
+	}
+
+	for _, nic := range nics {
 		if nic.IsPrimary {
 			// Populate "primary" object attribute
 			resp.Diagnostics.Append(tfsdk.ValueFrom(ctx, nicToNICModel(nic), types.ObjectType{
@@ -141,7 +145,17 @@ func (d *PrivateIPDataSource) Read(ctx context.Context, req datasource.ReadReque
 		resp.Diagnostics.AddError("Missing primary NIC", "No local NIC could be found that routes to a default gateway")
 	} else {
 		// Resource ID is combination of primary NIC IP and its network
-		data.Id = types.StringValue(data.Primary.Attributes()["ip"].(basetypes.StringValue).ValueString() + "_" + strings.ReplaceAll(data.Primary.Attributes()["network"].(basetypes.StringValue).ValueString(), "/", "_"))
+		ipValue, ok := data.Primary.Attributes()["ip"].(basetypes.StringValue)
+		if !ok {
+			resp.Diagnostics.AddError("Unable to retrieve primary NIC IP as StringValue.", "This is an error with the provider.")
+			return
+		}
+		networkValue, ok := data.Primary.Attributes()["network"].(basetypes.StringValue)
+		if !ok {
+			resp.Diagnostics.AddError("Unable to retrieve primary NIC network as StringValue.", "This is an error with the provider.")
+			return
+		}
+		data.Id = types.StringValue(ipValue.ValueString() + "_" + strings.ReplaceAll(networkValue.ValueString(), "/", "_"))
 	}
 
 	if resp.Diagnostics.HasError() {

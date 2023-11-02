@@ -7,6 +7,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/fireflycons/terraform-provider-localos/internal/helpers/privateip"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -21,7 +22,8 @@ type LocalOsProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
-	version string
+	version         string
+	localInterfaces privateip.LocalInterfaces
 }
 
 // LocalOsProviderModel describes the provider data model.
@@ -55,7 +57,10 @@ func (p *LocalOsProvider) Configure(ctx context.Context, req provider.ConfigureR
 		return
 	}
 
-	client := http.DefaultClient
+	client := ConfigurationData{
+		httpClient:      http.DefaultClient,
+		localInterfaces: p.localInterfaces,
+	}
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
@@ -76,7 +81,8 @@ func (p *LocalOsProvider) DataSources(ctx context.Context) []func() datasource.D
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
 		return &LocalOsProvider{
-			version: version,
+			version:         version,
+			localInterfaces: privateip.New(),
 		}
 	}
 }

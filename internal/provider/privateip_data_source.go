@@ -6,7 +6,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/fireflycons/terraform-provider-localos/internal/helpers/privateip"
@@ -28,7 +27,7 @@ func NewPrivateIPDataSource() datasource.DataSource {
 
 // PrivateIPDataSource defines the data source implementation.
 type PrivateIPDataSource struct {
-	client *http.Client
+	localInterfaces privateip.LocalInterfaces
 }
 
 // PrivateIPDataSourceModel describes the data source data model.
@@ -82,7 +81,7 @@ func (d *PrivateIPDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	client, ok := req.ProviderData.(*http.Client)
+	configData, ok := req.ProviderData.(ConfigurationData)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -93,7 +92,7 @@ func (d *PrivateIPDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	d.client = client
+	d.localInterfaces = configData.localInterfaces
 }
 
 func nicAttributeTypes() map[string]attr.Type {
@@ -115,48 +114,46 @@ func (d *PrivateIPDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	secondaries := make([]NICModel, 0, 4)
-	data.Primary = basetypes.NewObjectNull(nicAttributeTypes())
-	nics, err := privateip.GetLocalIP4Interfaces(true)
-
-	if err != nil {
+	// Read local interfaces
+	if err := d.localInterfaces.ScanInterfaces(); err != nil {
 		resp.Diagnostics.AddError(err.Error(), "This is an error with the provider.")
 	}
 
-	for _, nic := range nics {
-		if nic.IsPrimary {
-			// Populate "primary" object attribute
-			resp.Diagnostics.Append(tfsdk.ValueFrom(ctx, nicToNICModel(nic), types.ObjectType{
-				AttrTypes: nicAttributeTypes(),
-			}, &data.Primary)...)
-		} else {
-			secondaries = append(secondaries, nicToNICModel(nic))
-		}
+	// Populate "primary"
+	p := d.localInterfaces.GetPrimary()
+
+	if p == nil {
+		data.Primary = basetypes.NewObjectNull(nicAttributeTypes())
+		resp.Diagnostics.AddWarning("No primary network interface detected", d.localInterfaces.GetPrimaryAbsentReason())
+	} else {
+		resp.Diagnostics.Append(tfsdk.ValueFrom(ctx, nicToNICModel(p), types.ObjectType{
+			AttrTypes: nicAttributeTypes(),
+		}, &data.Primary)...)
 	}
 
-	// Populate "secondaries" list of objects
+	// Populate "secondaries"
+	secondaries := make([]NICModel, 0, 4)
+
+	for _, nic := range d.localInterfaces.GetSecondaries() {
+		secondaries = append(secondaries, nicToNICModel(nic))
+	}
+
 	resp.Diagnostics.Append(tfsdk.ValueFrom(ctx, secondaries, types.ListType{
 		ElemType: types.ObjectType{
 			AttrTypes: nicAttributeTypes(),
 		},
 	}, &data.Secondaries)...)
 
-	if data.Primary.IsNull() {
-		resp.Diagnostics.AddError("Missing primary NIC", "No local NIC could be found that routes to a default gateway")
-	} else {
-		// Resource ID is combination of primary NIC IP and its network
-		ipValue, ok := data.Primary.Attributes()["ip"].(basetypes.StringValue)
-		if !ok {
-			resp.Diagnostics.AddError("Unable to retrieve primary NIC IP as StringValue.", "This is an error with the provider.")
-			return
-		}
-		networkValue, ok := data.Primary.Attributes()["network"].(basetypes.StringValue)
-		if !ok {
-			resp.Diagnostics.AddError("Unable to retrieve primary NIC network as StringValue.", "This is an error with the provider.")
-			return
-		}
-		data.Id = types.StringValue(ipValue.ValueString() + "_" + strings.ReplaceAll(networkValue.ValueString(), "/", "_"))
+	// Generate resource ID
+	// Resource ID is combination of first NIC IP and its network
+	ridNic := d.localInterfaces.GetFirst()
+
+	if ridNic == nil {
+		resp.Diagnostics.AddError("No local NICs found", "Either this machine has no TCP/IP interfaces, or it is an error with the provider")
+		return
 	}
+
+	data.Id = types.StringValue(ridNic.Ip + "_" + strings.ReplaceAll(ridNic.Network, "/", "_"))
 
 	if resp.Diagnostics.HasError() {
 		return

@@ -14,16 +14,9 @@ import (
 )
 
 var nics = privateip.MustGetLocalIP4Interfaces(true)
-var primary = privateip.GetPrimary(nics)
+var primary = nics.GetPrimary()
 var countSecondaries = func() int {
-	cnt := 0
-	for _, n := range nics {
-		if !n.IsPrimary {
-			cnt++
-		}
-	}
-
-	return cnt
+	return len(nics.GetSecondaries())
 }
 
 func TestAccPrivateIpDataSource(t *testing.T) {
@@ -40,7 +33,7 @@ func TestAccPrivateIpDataSource(t *testing.T) {
 	}
 
 	ind := 0
-	for _, nic := range nics {
+	for _, nic := range nics.GetSecondaries() {
 		if !nic.IsPrimary {
 			checks = append(checks, resource.TestCheckResourceAttr("data.localos_private_ip.test", fmt.Sprintf("secondaries.%d.ip", ind), nic.Ip))
 			checks = append(checks, resource.TestCheckResourceAttr("data.localos_private_ip.test", fmt.Sprintf("secondaries.%d.cidr", ind), nic.Ip+"/32"))

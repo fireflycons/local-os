@@ -82,7 +82,7 @@ func (d *PublicIPDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	client, ok := req.ProviderData.(*http.Client)
+	configData, ok := req.ProviderData.(ConfigurationData)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -93,7 +93,7 @@ func (d *PublicIPDataSource) Configure(ctx context.Context, req datasource.Confi
 		return
 	}
 
-	d.client = client
+	d.client = configData.httpClient
 }
 
 func (d *PublicIPDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

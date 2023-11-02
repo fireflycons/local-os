@@ -85,9 +85,7 @@ func (i *LocalInterfacesImpl) GetSecondaries() []*NIC {
 
 func (i *LocalInterfacesImpl) GetFirst() *NIC {
 
-	var nic *NIC
-
-	nic = i.GetPrimary()
+	nic := i.GetPrimary()
 
 	if nic != nil {
 		return nic

@@ -142,7 +142,7 @@ func TestAccPrivateIpDataSourceWithNoInterfacesRaisesError(t *testing.T) {
 	})
 }
 
-// Instantiate provider and inject mock implementation of privateip.LocalInterfaces
+// Instantiate provider and inject mock implementation of privateip.LocalInterfaces.
 func newProviderWithMock(version string, mock privateip.LocalInterfaces) func() provider.Provider {
 	return func() provider.Provider {
 		return &LocalOsProvider{

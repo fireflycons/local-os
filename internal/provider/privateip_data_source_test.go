@@ -68,7 +68,7 @@ func NewWithMock(version string, mock privateip.LocalInterfaces) func() provider
 	}
 }
 
-// Test using mocked LocalInterfaces to simulate no primary interface
+// Test using mocked LocalInterfaces to simulate no primary interface.
 func TestAccPrivateIpDataSourceWithNoPrimary(t *testing.T) {
 	mock := privateip.NewMockLocalInterfaces(t)
 	secondary := &privateip.NIC{
@@ -104,7 +104,7 @@ func TestAccPrivateIpDataSourceWithNoPrimary(t *testing.T) {
 	})
 }
 
-// Test using mocked LocalInterfaces to simulate no interfaces at all
+// Test using mocked LocalInterfaces to simulate no interfaces at all.
 func TestAccPrivateIpDataSourceWithNoInterfacesRaisesError(t *testing.T) {
 	mock := privateip.NewMockLocalInterfaces(t)
 

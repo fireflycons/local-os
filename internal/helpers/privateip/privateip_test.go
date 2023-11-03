@@ -13,7 +13,7 @@ func TestPrimaryInteface(t *testing.T) {
 	var primary = nics.GetPrimary()
 
 	if primary == nil {
-		t.Logf("Cannot determine interface that has default gateway: %s", nics.GetPrimaryAbsentReason())
+		t.Skipf("Cannot determine interface that has default gateway: %s", nics.GetPrimaryAbsentReason())
 	} else {
 		require.Regexp(t, helpers.IpRegex, primary.Ip)
 		require.Regexp(t, helpers.NetworkCidrRegex, primary.Network)

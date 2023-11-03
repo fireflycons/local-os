@@ -16,7 +16,6 @@ type NIC struct {
 	IsPrimary bool
 }
 
-//go:generate mockery --name LocalInterfaces
 type LocalInterfaces interface {
 	// ScanInteterfaces reads the network interfaces connected to
 	// this machine and populates internal data strucutures.

@@ -7,30 +7,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var nics = MustGetLocalIP4Interfaces(true)
-
 func TestPrimaryInteface(t *testing.T) {
 
-	var primary *NIC = nil
+	nics := MustGetLocalIP4Interfaces(true)
+	var primary = nics.GetPrimary()
 
-	for _, nic := range nics {
-		if nic.IsPrimary {
-			primary = nic
-			break
-		}
+	if primary == nil {
+		t.Skipf("Cannot determine interface that has default gateway: %s", nics.GetPrimaryAbsentReason())
+	} else {
+		require.Regexp(t, helpers.IpRegex, primary.Ip)
+		require.Regexp(t, helpers.NetworkCidrRegex, primary.Network)
 	}
-
-	require.NotNil(t, primary, "No primary NIC located")
-	require.Regexp(t, helpers.IpRegex, primary.Ip)
-	require.Regexp(t, helpers.NetworkCidrRegex, primary.Network)
 }
 
 func TestSecondaryInterfaces(t *testing.T) {
 
-	for _, nic := range nics {
-		if !nic.IsPrimary {
-			require.Regexp(t, helpers.IpRegex, nic.Ip)
-			require.Regexp(t, helpers.NetworkCidrRegex, nic.Network)
-		}
+	for _, nic := range MustGetLocalIP4Interfaces(true).GetSecondaries() {
+		require.Regexp(t, helpers.IpRegex, nic.Ip)
+		require.Regexp(t, helpers.NetworkCidrRegex, nic.Network)
 	}
 }

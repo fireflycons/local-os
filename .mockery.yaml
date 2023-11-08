@@ -1,0 +1,12 @@
+with-expecter: true
+packages:
+  github.com/fireflycons/terraform-provider-localos/internal/helpers/privateip:
+    # place your package-specific config here
+    interfaces:
+      # select the interfaces you want mocked
+      LocalInterfaces:
+        # Modify package-level config for this specific interface (if applicable)
+        config:
+          mockName: "Mock{{.InterfaceName}}"
+          inpackage: true
+          dir: "{{.InterfaceDir}}"

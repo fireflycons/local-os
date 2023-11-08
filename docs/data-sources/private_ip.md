@@ -65,7 +65,3 @@ Read-Only:
 - `ip` (String) - IP Address of the interface
 - `name` (String) - Interface name of the interface
 - `network` (String) - CIDR range of network to which the interface is connected
-
-## Limitations
-
-Currently it is not possible to determine the pirmary NIC on BSD-like systems (including MacOS), therefore `primary` will always be null.
